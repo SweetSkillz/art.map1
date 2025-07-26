@@ -1,0 +1,27 @@
+name: Scrape Opportunities Daily
+
+on:
+  schedule:
+    # Roda todos os dias às 5h UTC (2h da manhã no horário de Brasília)
+    - cron: '0 5 * * *'
+  workflow_dispatch: # Permite rodar manualmente a partir da aba Actions no GitHub
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: cd functions && npm install
+
+      - name: Run scraper script
+        run: cd functions && node run-scrape.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
