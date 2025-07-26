@@ -15,7 +15,12 @@ async function main() {
 
   // 1. Tenta carregar da variável de ambiente (para o GitHub Actions)
   if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+    } catch (e) {
+      console.error("Erro ao analisar a chave de serviço do Firebase da variável de ambiente. Verifique se o segredo FIREBASE_SERVICE_ACCOUNT_KEY é um JSON válido.", e);
+      process.exit(1);
+    }
   } else {
     // 2. Tenta carregar de um arquivo local (para desenvolvimento no terminal)
     try {
@@ -24,17 +29,26 @@ async function main() {
       serviceAccount = require(serviceAccountPath);
       console.log("Chave de serviço carregada do arquivo local 'serviceAccountKey.json'.");
     } catch (e) {
-      // Ignora o erro se o arquivo não existir, pois a variável de ambiente é a prioridade.
+      // Se o erro não for "módulo não encontrado", significa que o arquivo existe mas é inválido.
+      // É importante mostrar esse erro para facilitar a depuração.
+      if (e.code !== "MODULE_NOT_FOUND") {
+        console.error("Erro ao carregar o arquivo 'serviceAccountKey.json'. Verifique se o JSON é válido.", e);
+      }
+      // Se o erro for 'MODULE_NOT_FOUND', o comportamento está correto: ignoramos e seguimos em frente.
     }
   }
 
-  if (serviceAccount) {
+  if (!serviceAccount) {
+    console.error("Chave de conta de serviço do Firebase não encontrada. Para rodar localmente, coloque o arquivo 'serviceAccountKey.json' na raiz do projeto. Para o GitHub Actions, configure o segredo FIREBASE_SERVICE_ACCOUNT_KEY.");
+    process.exit(1); // Sai com código de erro
+  }
+
+  // Inicializa o app do Firebase apenas se ainda não houver um app inicializado.
+  // Isso torna o script mais seguro caso seja importado por outro módulo.
+  if (admin.apps.length === 0) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
-  } else {
-    console.error("Chave de conta de serviço do Firebase não encontrada. Para rodar localmente, coloque o arquivo 'serviceAccountKey.json' na raiz do projeto. Para o GitHub Actions, configure o segredo FIREBASE_SERVICE_ACCOUNT_KEY.");
-    process.exit(1); // Sai com código de erro
   }
 
   const db = admin.firestore();
