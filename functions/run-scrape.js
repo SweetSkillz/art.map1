@@ -18,7 +18,8 @@ async function main() {
     try {
       serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
     } catch (e) {
-      console.error("Erro ao analisar a chave de serviço do Firebase da variável de ambiente. Verifique se o segredo FIREBASE_SERVICE_ACCOUNT_KEY é um JSON válido.", e);
+      console.error("Erro ao analisar a chave de serviço da variável de ambiente.");
+      console.error("Verifique se o segredo FIREBASE_SERVICE_ACCOUNT_KEY é um JSON válido.", e);
       process.exit(1);
     }
   } else {
@@ -39,7 +40,9 @@ async function main() {
   }
 
   if (!serviceAccount) {
-    console.error("Chave de conta de serviço do Firebase não encontrada. Para rodar localmente, coloque o arquivo 'serviceAccountKey.json' na raiz do projeto. Para o GitHub Actions, configure o segredo FIREBASE_SERVICE_ACCOUNT_KEY.");
+    console.error("Chave de serviço não encontrada. Para rodar localmente,");
+    console.error("coloque o arquivo 'serviceAccountKey.json' na raiz do projeto.");
+    console.error("Para o GitHub Actions, configure o segredo FIREBASE_SERVICE_ACCOUNT_KEY.");
     process.exit(1); // Sai com código de erro
   }
 
@@ -53,7 +56,7 @@ async function main() {
 
   const db = admin.firestore();
 
-  await runScraper(db).catch((error) => {
+  await runScraper(db, console).catch((error) => {
     console.error("A execução do scraper falhou:", error);
     process.exit(1);
   });

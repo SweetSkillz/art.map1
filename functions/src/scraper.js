@@ -1,12 +1,13 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const admin = require("firebase-admin");
+const logger = require("firebase-functions/logger");
 
 /**
  * Realiza o web scraping de oportunidades e as salva no Firestore.
  * @param {FirebaseFirestore.Firestore} db A instância do Firestore.
  */
-async function runScraper(db) {
+async function runScraper(db, customLogger = logger) {
   // IMPORTANTE: Este App ID deve ser o mesmo do seu frontend.
   const appId = "1:985486996681:web:2d6b4bdd470d0381120918";
   const opportunitiesRef = db.collection(`artifacts/${appId}/public/data/opportunities`);
@@ -24,7 +25,7 @@ async function runScraper(db) {
       const description = $(element).find(".entry-content p").text().trim();
 
       if (title && sourceUrl) {
-        console.log(`Oportunidade encontrada: ${title}`);
+        customLogger.info(`Oportunidade encontrada: ${title}`);
         const docId = sourceUrl.split("/").filter(Boolean).pop();
 
         const newOpp = {
@@ -41,9 +42,9 @@ async function runScraper(db) {
     });
 
     await Promise.all(promises);
-    console.log("Busca concluída com sucesso!");
+    customLogger.info("Busca concluída com sucesso!");
   } catch (error) {
-    console.error("Erro durante a busca (scraping):", error);
+    customLogger.error("Erro durante a busca (scraping):", error);
     // Lançar o erro para que o chamador (Cloud Function ou script) saiba que falhou.
     throw error;
   }
