@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art.Map - Oportunidades para Artistas</title>
+    <!-- Carrega o Tailwind CSS para estilização responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuração do Tailwind CSS para usar a fonte Inter e cores base -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Base background color (preto) e cor do texto principal (branco/cinza claro) */
+            background-color: #1a202c; /* Tailwind gray-900 */
+            color: #e2e8f0; /* Tailwind gray-200 */
+        }
+        /* Estilo para o modal de mensagem */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #2d3748; /* Tailwind gray-800 */
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #4a5568; /* Tailwind gray-600 */
+            border-radius: 0.5rem;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            color: #e2e8f0;
+        }
+        .modal-close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .modal-close-button:hover,
+        .modal-close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Estilos para o Carrossel */
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
+        }
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+    </style>
+    <!-- Ícones Lucide (versão para uso direto em HTML) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-900 text-white antialiased">
+    <!-- Modal de Mensagem Personalizado -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close-button" onclick="hideModalMessage()">&times;</span>
+            <h3 id="modalTitle" class="text-2xl font-bold text-purple-400 mb-4"></h3>
+            <p id="modalMessage" class="text-gray-300 mb-6"></p>
+            <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300" onclick="hideModalMessage()">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <header class="bg-black text-white p-4 shadow-lg rounded-b-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Título do site com cor roxa -->
+            <h1 class="text-3xl font-bold text-teal-400">Art.Map</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <!-- Links de navegação com hover amarelo -->
+                    <li><a href="#oportunidades" class="hover:text-yellow-400 transition-colors duration-300">Oportunidades</a></li>
+                    <li><a href="#publicar" class="hover:text-yellow-400 transition-colors duration-300">Publicar</a></li>
+                    <li><a href="#viagens" class="hover:text-yellow-400 transition-colors duration-300">Viagens</a></li>
+                    <li><a href="#recursos" class="hover:text-yellow-400 transition-colors duration-300">Recursos</a></li>
+                    <li><a href="#comunidade" class="hover:text-yellow-400 transition-colors duration-300">Comunidade</a></li>
+                    <li><a href="#sobre" class="hover:text-yellow-400 transition-colors duration-300">Sobre</a></li>
+                    <li><a href="#contacto" class="hover:text-yellow-400 transition-colors duration-300">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Seção Carrossel de Notícias -->
+    <section id="home" class="container mx-auto mt-8 max-w-6xl">
+        <div class="carousel-container">
+            <ul class="carousel-track">
+                <li class="carousel-slide">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop" alt="Editais Abertos" class="w-full h-96 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-center p-4">
+                        <span class="bg-purple-600 text-white text-sm font-bold px-3 py-1 rounded-full mb-4">EDITAIS ABERTOS</span>
+                        <h2 class="text-4xl font-extrabold text-white mb-4">Prêmio Funarte de Estímulo ao Circo 2024</h2>
+                        <p class="text-lg text-gray-200 mb-6 max-w-2xl">Inscrições abertas para projetos circenses de todo o Brasil. Não perca a chance!</p>
+                        <a href="#oportunidades" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-full">Saiba Mais</a>
+                    </div>
+                </li>
+                <li class="carousel-slide">
+                    <img src="https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b?q=80&w=2070&auto=format&fit=crop" alt="Eventos" class="w-full h-96 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-center p-4">
+                        <span class="bg-teal-600 text-white text-sm font-bold px-3 py-1 rounded-full mb-4">EVENTOS</span>
+                        <h2 class="text-4xl font-extrabold text-white mb-4">Festival de Dança de Joinville</h2>
+                        <p class="text-lg text-gray-200 mb-6 max-w-2xl">Participe do maior festival de dança do mundo. Workshops, competições e espetáculos.</p>
+                        <a href="#oportunidades" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-full">Ver Programação</a>
+                    </div>
+                </li>
+                <li class="carousel-slide">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1932&auto=format&fit=crop" alt="Oportunidades de Emprego" class="w-full h-96 object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-center p-4">
+                        <span class="bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full mb-4">OPORTUNIDADES DE EMPREGO</span>
+                        <h2 class="text-4xl font-extrabold text-white mb-4">Tatuador(a) Residente em Estúdio de SP</h2>
+                        <p class="text-lg text-gray-200 mb-6 max-w-2xl">Estúdio renomado busca artista com portfólio sólido para vaga de residente.</p>
+                        <a href="#oportunidades" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-full">Ver Detalhes da Vaga</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="carousel-button left-2 rounded-full"><i data-lucide="chevron-left"></i></button>
+            <button class="carousel-button right-2 rounded-full"><i data-lucide="chevron-right"></i></button>
+            <div class="carousel-nav absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                <!-- Indicadores serão gerados pelo JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Oportunidades -->
+    <section id="oportunidades" class="container mx-auto py-12 px-4">
+        <!-- Título da seção roxo -->
+        <h3 class="text-3xl font-bold text-purple-400 mb-8 text-center">Oportunidades em Destaque</h3>
+        <!-- Barra de Pesquisa e Filtros -->
+        <div class="mb-8 flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+            <input type="text" placeholder="Pesquisar oportunidades..." class="p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 w-full md:w-1/2">
+            <select class="p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="">Todas as Categorias</option>
+                <option value="circo">Circo</option>
+                <option value="breaking">Breaking</option>
+                <option value="tatuagem">Tatuagem</option>
+                <option value="musica">Música</option>
+                <option value="teatro">Teatro</option>
+                <option value="artes-visuais">Artes Visuais</option>
+                <option value="outros">Outros</option>
+            </select>
+            <select class="p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="">Todas as Localizações</option>
+                <option value="sp">São Paulo</option>
+                <option value="rj">Rio de Janeiro</option>
+                <option value="mg">Belo Horizonte</option>
+                <option value="online">Online</option>
+                <option value="outra">Outra</option>
+            </select>
+        </div>
+        <div id="opportunities-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- As oportunidades serão carregadas aqui dinamicamente pelo JavaScript -->
+            <p class="text-center text-gray-400 col-span-full">A carregar oportunidades...</p>
+        </div>
+    </section>
+
+    <!-- Seção Publicar Oportunidade (inspirado no prosas.com e coffeepaste.com) -->
+    <section id="publicar" class="bg-gray-800 py-12 px-4 shadow-md rounded-lg mx-auto mt-8 max-w-6xl">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8 text-center">Publicar Nova Oportunidade</h3>
+        <form class="space-y-6 max-w-2xl mx-auto">
+            <div>
+                <label for="opportunity-title" class="block text-sm font-medium text-gray-300 mb-1">Título da Oportunidade</label>
+                <input type="text" id="opportunity-title" name="opportunity-title" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Ex: Edital de Dança Contemporânea" required>
+            </div>
+            <div>
+                <label for="opportunity-description" class="block text-sm font-medium text-gray-300 mb-1">Descrição Detalhada</label>
+                <textarea id="opportunity-description" name="opportunity-description" rows="5" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Descreva a oportunidade, requisitos, benefícios..." required></textarea>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="opportunity-type" class="block text-sm font-medium text-gray-300 mb-1">Tipo</label>
+                    <select id="opportunity-type" name="opportunity-type" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        <option value="">Selecione o Tipo</option>
+                        <option value="edital">Edital</option>
+                        <option value="audicao">Audição</option>
+                        <option value="vaga">Vaga de Emprego</option>
+                        <option value="evento">Evento</option>
+                        <option value="residencia">Residência Artística</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="opportunity-category" class="block text-sm font-medium text-gray-300 mb-1">Categoria Artística</label>
+                    <select id="opportunity-category" name="opportunity-category" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        <option value="">Selecione a Categoria</option>
+                        <option value="circo">Circo</option>
+                        <option value="breaking">Breaking</option>
+                        <option value="tatuagem">Tatuagem</option>
+                        <option value="danca">Dança (Geral)</option>
+                        <option value="musica">Música</option>
+                        <option value="teatro">Teatro</option>
+                        <option value="artes-visuais">Artes Visuais</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="opportunity-location" class="block text-sm font-medium text-gray-300 mb-1">Localização</label>
+                    <input type="text" id="opportunity-location" name="opportunity-location" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Ex: São Paulo, SP ou Online">
+                </div>
+                <div>
+                    <label for="opportunity-deadline" class="block text-sm font-medium text-gray-300 mb-1">Prazo / Data do Evento</label>
+                    <input type="date" id="opportunity-deadline" name="opportunity-deadline" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+            </div>
+            <div>
+                <label for="opportunity-source" class="block text-sm font-medium text-gray-300 mb-1">Link da Fonte (URL)</label>
+                <input type="url" id="opportunity-source" name="opportunity-source" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="https://exemplo.com/oportunidade">
+            </div>
+            <div>
+                <label for="opportunity-image" class="block text-sm font-medium text-gray-300 mb-1">URL da Imagem (Opcional)</label>
+                <input type="url" id="opportunity-image" name="opportunity-image" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="https://exemplo.com/imagem.jpg">
+            </div>
+            <!-- Botão de submissão com cor amarela -->
+            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-md shadow-lg transition-transform transform hover:scale-105">
+                Publicar Oportunidade
+            </button>
+        </form>
+    </section>
+
+    <!-- Seção de Recursos (inspirado no coffeepaste.com) -->
+    <section id="recursos" class="container mx-auto py-12 px-4">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8 text-center">Recursos para Artistas</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card de Recurso 1 -->
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-yellow-500">
+                <div class="p-6">
+                    <h4 class="text-xl font-semibold text-yellow-400 mb-2">Guia de Editais Culturais</h4>
+                    <p class="text-gray-300 text-sm mb-4">
+                        Um guia completo sobre como encontrar e se inscrever em editais de fomento à cultura.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-purple-400 hover:text-purple-300 font-medium">
+                        Ler Guia <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- Card de Recurso 2 -->
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-yellow-500">
+                <div class="p-6">
+                    <h4 class="text-xl font-semibold text-yellow-400 mb-2">Dicas de Hospedagem e Alimentação</h4>
+                    <p class="text-gray-300 text-sm mb-4">
+                        Conselhos práticos para artistas em trânsito, com foco em opções acessíveis.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-purple-400 hover:text-purple-300 font-medium">
+                        Ver Dicas <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- Card de Recurso 3 -->
+            <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-yellow-500">
+                <div class="p-6">
+                    <h4 class="text-xl font-semibold text-yellow-400 mb-2">Artigos sobre Gestão Financeira</h4>
+                    <p class="text-gray-300 text-sm mb-4">
+                        Aprenda a gerir suas finanças como artista independente.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-purple-400 hover:text-purple-300 font-medium">
+                        Acessar Artigos <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Planejamento de Viagem -->
+    <section id="viagens" class="container mx-auto py-12 px-4">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8 text-center">Planeje sua Viagem</h3>
+        <p class="text-lg text-gray-300 max-w-3xl mx-auto text-center mb-12">
+            Encontrar a oportunidade é o primeiro passo. Nós te ajudamos com o próximo: encontrar passagens e hospedagens acessíveis para que você possa focar na sua arte.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Card de Pesquisa de Passagens -->
+            <div class="bg-gray-800 rounded-lg shadow-md p-6 border border-teal-500">
+                <h4 class="text-xl font-semibold text-teal-400 mb-4 flex items-center">
+                    <i data-lucide="plane" class="mr-2"></i>
+                    Pesquisar Passagens Aéreas
+                </h4>
+                <!-- Formulário que redireciona para o Google Flights -->
+                <form action="https://www.google.com/flights" method="get" target="_blank" class="space-y-4">
+                    <div>
+                        <label for="flight-origin" class="block text-sm font-medium text-gray-300 mb-1">Origem</label>
+                        <input type="text" id="flight-origin" name="origin" class="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600" placeholder="Cidade ou aeroporto">
+                    </div>
+                    <div>
+                        <label for="flight-destination" class="block text-sm font-medium text-gray-300 mb-1">Destino</label>
+                        <input type="text" id="flight-destination" name="destination" class="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600" placeholder="Cidade ou aeroporto">
+                    </div>
+                    <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300">
+                        Buscar Voos
+                    </button>
+                </form>
+            </div>
+            <!-- Card de Pesquisa de Hospedagem -->
+            <div class="bg-gray-800 rounded-lg shadow-md p-6 border border-teal-500">
+                <h4 class="text-xl font-semibold text-teal-400 mb-4 flex items-center">
+                    <i data-lucide="bed-double" class="mr-2"></i>
+                    Encontrar Hospedagem
+                </h4>
+                <!-- Formulário que redireciona para o Booking.com -->
+                <form action="https://www.booking.com/searchresults.html" method="get" target="_blank" class="space-y-4">
+                    <div>
+                        <label for="hotel-destination" class="block text-sm font-medium text-gray-300 mb-1">Destino</label>
+                        <input type="text" id="hotel-destination" name="ss" class="w-full p-2 rounded-md bg-gray-700 text-white border border-gray-600" placeholder="Cidade, região ou hotel">
+                    </div>
+                    <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300">
+                        Buscar Hospedagens
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Comunidade (Placeholder para futuras interações) -->
+    <section id="comunidade" class="bg-gray-800 py-12 px-4 shadow-md rounded-lg mx-auto mt-8 max-w-6xl text-center">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8">Nossa Comunidade</h3>
+        <p class="text-lg text-gray-300 mb-6">
+            Conecte-se com outros artistas, partilhe experiências e crie novas oportunidades juntos.
+        </p>
+        <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-transform transform hover:scale-105">
+            Juntar-se à Comunidade
+        </button>
+    </section>
+
+    <!-- Seção Sobre Nós -->
+    <section id="sobre" class="container mx-auto py-12 px-4 text-center">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8">Sobre o Art.Map</h3>
+        <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-6">
+            O Art.Map nasceu da necessidade de centralizar e democratizar o acesso a oportunidades para artistas independentes. Como artistas circenses, dançarinos de breaking e tatuadores, enfrentamos desafios para encontrar editais, audições e trabalhos, além das dificuldades logísticas e financeiras.
+        </p>
+        <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+            Nossa missão é ser a ponte entre o talento e as oportunidades, fornecendo não apenas informações, mas também recursos e uma comunidade de apoio para que nenhum artista se sinta desamparado.
+        </p>
+    </section>
+
+    <!-- Seção de Contacto -->
+    <section id="contacto" class="bg-gray-800 py-12 px-4 shadow-md rounded-lg mx-auto mt-8 max-w-6xl">
+        <h3 class="text-3xl font-bold text-purple-400 mb-8 text-center">Entre em Contacto</h3>
+        <form class="space-y-6 max-w-xl mx-auto">
+            <div>
+                <label for="contact-name" class="block text-sm font-medium text-gray-300 mb-1">Seu Nome</label>
+                <input type="text" id="contact-name" name="contact-name" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+            </div>
+            <div>
+                <label for="contact-email" class="block text-sm font-medium text-gray-300 mb-1">Seu Email</label>
+                <input type="email" id="contact-email" name="contact-email" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+            </div>
+            <div>
+                <label for="contact-message" class="block text-sm font-medium text-gray-300 mb-1">Sua Mensagem</label>
+                <textarea id="contact-message" name="contact-message" rows="5" class="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" required></textarea>
+            </div>
+            <!-- Botão de envio com cor amarela -->
+            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-6 rounded-md shadow-lg transition-transform transform hover:scale-105">
+                Enviar Mensagem
+            </button>
+        </form>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="bg-black text-white p-6 mt-12 rounded-t-lg">
+        <div class="container mx-auto text-center text-sm">
+            <p>&copy; 2025 Art.Map. Todos os direitos reservados.</p>
+            <p>Conectando artistas, transformando realidades.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Corrigido: Movidas as importações para o topo do bloco de script
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+        import { getFirestore, collection, query, onSnapshot, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+        // Sua configuração do Firebase, colada diretamente aqui.
+        const firebaseConfig = {
+            apiKey: "AIzaSyCEyjuHmP4meQPneRA8BingHrL0mjfo3O8",
+            authDomain: "artmap-2f9b6.firebaseapp.com",
+            projectId: "artmap-2f9b6",
+            storageBucket: "artmap-2f9b6.firebasestorage.app",
+            messagingSenderId: "985486996681",
+            appId: "1:985486996681:web:2d6b4bdd470d0381120918"
+        };
+
+        const appId = firebaseConfig.appId;
+
+        let app;
+        let db;
+        let auth;
+        let userId;
+
+        /**
+         * Inicializa o Firebase e autentica o utilizador.
+         * Tenta autenticar com um token personalizado ou anonimamente.
+         * Observa as mudanças no estado de autenticação para carregar oportunidades.
+         */
+        async function initializeFirebase() {
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.error("Firebase Config está vazia. Não é possível inicializar o Firebase.");
+                showModalMessage("Erro de Configuração", "A configuração do Firebase não foi encontrada. Verifique o objeto firebaseConfig no script.");
+                return; // Para a inicialização se a configuração estiver vazia
+            }
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                await signInAnonymously(auth);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Utilizador autenticado:", userId);
+                        // Carrega as oportunidades após a autenticação
+                        loadOpportunities();
+                    } else {
+                        userId = null;
+                        console.log("Nenhum utilizador autenticado.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase ou autenticar:", error);
+                showModalMessage("Erro de Inicialização", `Não foi possível conectar ao Firebase: ${error.message}. Verifique a sua consola para mais detalhes.`);
+            }
+        }
+
+        /**
+         * Carrega as oportunidades do Firestore em tempo real.
+         * Atualiza o container de oportunidades na página.
+         */
+        function loadOpportunities() {
+            if (!db) {
+                console.warn("Firestore não está inicializado. Não é possível carregar oportunidades.");
+                return;
+            }
+            const opportunitiesColRef = collection(db, `artifacts/${appId}/public/data/opportunities`);
+            const q = query(opportunitiesColRef);
+
+            onSnapshot(q, (snapshot) => {
+                const opportunitiesContainer = document.getElementById('opportunities-container');
+                opportunitiesContainer.innerHTML = ''; // Limpa o container
+
+                if (snapshot.empty) {
+                    opportunitiesContainer.innerHTML = '<p class="text-center text-gray-400 col-span-full">Nenhuma oportunidade encontrada. Seja o primeiro a adicionar uma!</p>';
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const opportunity = doc.data();
+                    
+                    // Melhora a formatação da data, tratando o timestamp do Firestore
+                    let deadlineDate = 'Não definido';
+                    if (opportunity.deadline && opportunity.deadline.toDate) {
+                        // O Firestore retorna um objeto Timestamp, convertemos para Date
+                        const date = opportunity.deadline.toDate();
+                        deadlineDate = date.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); // Formata a data como DD/MM/AAAA
+                    }
+
+                    const cardHtml = `
+                        <div class="bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-purple-500">
+                            <img src="${opportunity.imageUrl || 'https://placehold.co/600x400/8B5CF6/FFFFFF?text=Oportunidade'}" alt="${opportunity.title}" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h4 class="text-xl font-semibold text-purple-400 mb-2">${opportunity.title}</h4>
+                                <p class="text-gray-300 text-sm mb-4">
+                                    ${opportunity.description ? opportunity.description.substring(0, 100) + (opportunity.description.length > 100 ? '...' : '') : 'Sem descrição.'}
+                                </p>
+                                <div class="flex justify-between items-center text-sm text-gray-400 mb-4">
+                                    <span><i data-lucide="map-pin" class="inline-block w-4 h-4 mr-1 text-yellow-400"></i> ${opportunity.location || 'Local Desconhecido'}</span>
+                                    <span><i data-lucide="calendar" class="inline-block w-4 h-4 mr-1 text-yellow-400"></i> Prazo: ${deadlineDate}</span>
+                                </div>
+                                <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300" onclick="showOpportunityDetails('${doc.id}')">
+                                    Ver Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    opportunitiesContainer.innerHTML += cardHtml;
+                });
+                lucide.createIcons(); // Re-renderiza os ícones para os novos elementos
+            }, (error) => {
+                console.error("Erro ao carregar oportunidades:", error);
+                showModalMessage("Erro de Carregamento", "Não foi possível carregar as oportunidades. Tente recarregar a página.");
+            });
+        }
+
+        /**
+         * Manipula a submissão do formulário de Publicar Nova Oportunidade.
+         * Coleta os dados do formulário e os envia para o Firestore.
+         * @param {Event} event - O evento de submissão do formulário.
+         */
+        async function handlePublishOpportunity(event) {
+            event.preventDefault(); // Impede o recarregamento da página
+
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+
+            if (!db || !userId) {
+                showModalMessage("Erro de Autenticação", "Por favor, aguarde a autenticação do utilizador ou tente novamente.");
+                return;
+            }
+
+            // Coleta os dados do formulário
+            const title = form['opportunity-title'].value;
+            const description = form['opportunity-description'].value;
+            const type = form['opportunity-type'].value;
+            const category = form['opportunity-category'].value;
+            const location = form['opportunity-location'].value;
+            const deadline = form['opportunity-deadline'].value; // Data como string 'YYYY-MM-DD'
+            const sourceUrl = form['opportunity-source'].value;
+            const imageUrl = form['opportunity-image'].value;
+
+            // Validação básica dos campos obrigatórios
+            if (!title || !description || !type || !category) {
+                showModalMessage("Campos Obrigatórios", "Por favor, preencha todos os campos obrigatórios (Título, Descrição, Tipo, Categoria).");
+                return;
+            }
+
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Publicando...';
+
+                const opportunitiesColRef = collection(db, `artifacts/${appId}/public/data/opportunities`);
+                await addDoc(opportunitiesColRef, {
+                    title: title,
+                    description: description,
+                    type: type,
+                    category: category,
+                    location: location || 'Não especificado',
+                    // Converte a string de data 'YYYY-MM-DD' para um objeto Date em UTC para evitar problemas de fuso horário. O Firestore o converterá para um Timestamp.
+                    deadline: deadline ? new Date(deadline + 'T00:00:00Z') : null,
+                    sourceUrl: sourceUrl || '',
+                    imageUrl: imageUrl || '',
+                    postedBy: userId,
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+
+                showModalMessage("Sucesso!", "Oportunidade publicada com sucesso!");
+                form.reset(); // Limpa o formulário após a submissão
+            } catch (e) {
+                console.error("Erro ao publicar oportunidade: ", e);
+                showModalMessage("Erro ao Publicar", "Ocorreu um erro ao publicar a oportunidade. Por favor, tente novamente.");
+            } finally {
+                // Reativa o botão e restaura o texto original
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        }
+
+        /**
+         * Exibe um modal de mensagem personalizado.
+         * @param {string} title - O título da mensagem.
+         * @param {string} message - O conteúdo da mensagem.
+         */
+        function showModalMessage(title, message) {
+            const modal = document.getElementById('messageModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = message; // Usa innerHTML para renderizar o HTML
+            modal.style.display = 'flex'; // Mostra o modal
+        }
+
+        /**
+         * Esconde o modal de mensagem.
+         */
+        function hideModalMessage() {
+            const modal = document.getElementById('messageModal');
+            modal.style.display = 'none';
+        }
+
+        // Expõe funções globais para o HTML
+        window.showOpportunityDetails = async (docId) => {
+            if (!db) return;
+
+            try {
+                const opportunityRef = doc(db, `artifacts/${appId}/public/data/opportunities`, docId);
+                const docSnap = await getDoc(opportunityRef);
+
+                if (docSnap.exists()) {
+                    const opportunity = docSnap.data();
+                    
+                    let deadlineDate = 'Não definido';
+                    if (opportunity.deadline && opportunity.deadline.toDate) {
+                        const date = opportunity.deadline.toDate();
+                        deadlineDate = date.toLocaleDateString('pt-BR', { timeZone: 'UTC' }); // Formata a data como DD/MM/AAAA
+                    }
+
+                    const detailsHtml = `
+                        <div class="text-left">
+                            <p class="mb-4">${opportunity.description}</p>
+                            <p><strong>Local:</strong> ${opportunity.location || 'Não especificado'}</p>
+                            <p><strong>Prazo:</strong> ${deadlineDate}</p>
+                            <p><strong>Categoria:</strong> ${opportunity.category}</p>
+                            <p><strong>Tipo:</strong> ${opportunity.type}</p>
+                            ${opportunity.sourceUrl ? `<p class="mt-4"><a href="${opportunity.sourceUrl}" target="_blank" class="text-yellow-400 hover:underline">Ver fonte original</a></p>` : ''}
+                        </div>
+                    `;
+                    showModalMessage(opportunity.title, detailsHtml);
+                } else {
+                    showModalMessage("Erro", "Oportunidade não encontrada.");
+                }
+            } catch (error) {
+                console.error("Erro ao buscar detalhes da oportunidade:", error);
+                showModalMessage("Erro", "Não foi possível carregar os detalhes.");
+            }
+        };
+        window.hideModalMessage = hideModalMessage; // Expõe a função para o botão de fechar do modal
+
+        // Inicializa o Firebase e adiciona listeners de eventos quando o DOM estiver completamente carregado
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFirebase();
+            lucide.createIcons(); // Renderiza os ícones iniciais
+
+            // Adiciona rolagem suave para os links de navegação
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Adiciona o listener para o formulário de publicação
+            const publishForm = document.querySelector('#publicar form');
+            if (publishForm) {
+                publishForm.addEventListener('submit', handlePublishOpportunity);
+            }
+
+            // Lógica do Carrossel
+            const track = document.querySelector('.carousel-track');
+            if (track) {
+                const slides = Array.from(track.children);
+                const nextButton = document.querySelector('.carousel-button.right-2');
+                const prevButton = document.querySelector('.carousel-button.left-2');
+                const dotsNav = document.querySelector('.carousel-nav');
+
+                // Cria os indicadores
+                slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.classList.add('w-3', 'h-3', 'bg-white', 'bg-opacity-50', 'rounded-full', 'transition-all');
+                    if (i === 0) dot.classList.add('bg-opacity-100');
+                    dotsNav.appendChild(dot);
+                });
+
+                const dots = Array.from(dotsNav.children);
+                let currentIndex = 0;
+
+                const moveToSlide = (index) => {
+                    track.style.transform = 'translateX(-' + 100 * index + '%)';
+                    dots.forEach(dot => dot.classList.remove('bg-opacity-100'));
+                    dots[index].classList.add('bg-opacity-100');
+                    currentIndex = index;
+                };
+
+                nextButton.addEventListener('click', () => {
+                    const nextIndex = (currentIndex + 1) % slides.length;
+                    moveToSlide(nextIndex);
+                });
+
+                prevButton.addEventListener('click', () => {
+                    const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    moveToSlide(prevIndex);
+                });
+
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => moveToSlide(index));
+                });
+
+                // Auto-play
+                setInterval(() => {
+                    const nextIndex = (currentIndex + 1) % slides.length;
+                    moveToSlide(nextIndex);
+                }, 5000); // Muda a cada 5 segundos
+            }
+
+            console.log('Art.Map frontend carregado com sucesso!');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Oportunidades: Qualquer um pode ler, mas apenas usuários logados podem criar.
+    // Apenas o criador pode atualizar ou deletar (regra a ser adicionada no futuro).
+    match /artifacts/{appId}/public/data/opportunities/{opportunityId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // Perfis de Usuário: Cada usuário só pode ler e escrever no seu próprio perfil.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
